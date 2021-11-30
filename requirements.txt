@@ -1,0 +1,18 @@
+# Basics 
+jupyter
+ipython
+termcolor
+tqdm
+glob
+
+# Data Manipulation
+matplotlib
+numpy
+pandas
+openpyxl
+
+# Machine Learning
+
+sklearn
+torch
+pyyaml
