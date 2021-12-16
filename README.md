@@ -1,10 +1,10 @@
 ## Late Residual Connections
 
-This repository is a cleaned version of my research on the vanishing gradient problem with dead ReLUs. My research suggest an approach to combat dead ReLUs with residual connections called Late Residual Connections. These connections are added directly to the output of a neural network. For my research purposes, this code only creates networks of width two and any depth. Please feel free to use the code and add on to the research! Please feel free to contact me [here](mailto:matthew.f.ernst@gmail.com) for any questions.
+This repository is a cleaned version of my research on the vanishing gradient problem with dead ReLUs. My research suggests an approach to combat dead ReLUs with residual connections called Late Residual Connections. These connections are added directly to the output of a neural network from each hidden layer. Please feel free to use the code and add on to the research! I can be reached [here](mailto:matthew.f.ernst@gmail.com) for any questions.
 
 ### Example of A Late Residual Connection Neural Network
 
-Below is an example of an abstracted view of traditional versus late residual neural networks. Each hidden layer has a late residual connection the output. To simplify, this connection allows for moregradient flow to each neuron in the network.
+Below is an example of an abstracted view of traditional versus late residual neural networks. Each hidden layer has a late residual connection the output. To simplify, this connection allows for moregradient flow to each neuron in the network. My full thesis can be read [here](thesis.pdf).
 
 ![late-residual](Images/lrn.png)
 
