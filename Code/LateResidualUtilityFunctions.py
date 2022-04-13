@@ -99,16 +99,17 @@ def combine_all_dataframes_to_csv():
     final = pd.concat([adam_dataframe, sgd_dataframe], axis=0)
     final.to_csv('Results/All-Results.csv', index=False)
 
+
 def print_starting_experiment_message():
-    print(colored('\t================== STARTING EXPERIMENT ==================', 'yellow', attrs=['blink']))
+    print(colored('\t=============================================== STARTING EXPERIMENT ===============================================', 'yellow', attrs=['blink']))
 
 def print_current_training_architecture(network_architecture, learning_rate, connection_style, optimizer, color='blue'):
-    training_info = f"\tNETWORK ARCHITECTURE: [WIDTH: {network_architecture[-1]}, DEPTH: {len(network_architecture)}] OPTIMIZER: {optimizer} LEARNING RATE: {learning_rate} CONNECTION: {connection_style}"
-
+    training_info = f"\t\tNETWORK ARCHITECTURE: [WIDTH: {network_architecture[-1]}, DEPTH: {len(network_architecture)}] OPTIMIZER: {optimizer} LEARNING RATE: {learning_rate} CONNECTION: {connection_style}"
+    training_hashes = ''.join(['#' for _ in range(len(" TRAINING "))])
     print(colored(f"\t{''.join(['#' for _ in range(len(training_info) // 2)])} TRAINING {''.join(['#' for _ in range(len(training_info) // 2)])}", color))
     print(colored(training_info, color))
-    print(colored(f"\t{''.join(['#' for _ in range(len(training_info))])}\n", color))
+    print(colored(f"\t{''.join(['#' for _ in range(len(training_info) // 2)])}{training_hashes}{''.join(['#' for _ in range(len(training_info) // 2)])}", color))
 
 
 def print_end_of_all_training_message():
-    print(colored('\t================== EXPERIMENT COMPLETE ==================', 'green', attrs=['blink']))
+    print(colored('\t=============================================== EXPERIMENT COMPLETE ===============================================', 'green', attrs=['blink']))
