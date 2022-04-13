@@ -79,10 +79,12 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
 
 
 
-
+'''
+This python file is intended to be used with the 'run_notebook_script.py' file. 
+Experiment parameters are passed in using this file.
+'''
 
 def run(width, depths, learning_rates, optimizers, epochs):
-    # Experiment Parameters 
     network_architectures = []
     for depth in depths:
         network_architectures.append([width for _ in range(depth)])
