@@ -5,11 +5,11 @@ from termcolor import colored
 import glob 
 
 def load_abs_data():
-    df = pd.read_csv('ABSdata.csv')
-    X = df['X'].values
+    dataframe = pd.read_csv('ABSdata.csv')
+    X = dataframe['X'].values
     X = X.reshape(-1,1)
 
-    T = df['T'].values
+    T = dataframe['T'].values
     T = T.reshape(-1, 1)
 
     assert(X.shape == (20, 1))

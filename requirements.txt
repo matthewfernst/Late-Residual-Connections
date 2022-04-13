@@ -12,7 +12,4 @@ pandas
 openpyxl
 
 # Machine Learning
-
-sklearn
 torch
-pyyaml
