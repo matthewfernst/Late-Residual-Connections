@@ -1,0 +1,13 @@
+,Iterative - Total Converged,Iterative - Amount of Dead Neurons,Iterative - Amount of Dead Layers,Iterative - Total Time,Batch - Total Converged,Batch - Amount of Dead Neurons,Batch - Amount of Dead Layers,Batch - Total Time
+Depth 2 - Non Residual,0,0,0,0,0,0,0,0
+Depth 2 - Residual,0.0,0.0,0.0,0.0,3.0,1.0,2.0,0.481
+Depth 5 - Non Residual,0,0,0,0,0,0,0,0
+Depth 5 - Residual,3.0,3.0,5.0,0.866,3.0,4.0,5.0,0.864
+Depth 10 - Non Residual,0,0,0,0,0,0,0,0
+Depth 10 - Residual,0.0,0.0,0.0,0.0,3.0,7.5,10.0,1.486
+Depth 20 - Non Residual,0,0,0,0,0,0,0,0
+Depth 20 - Residual,3.0,17.0,20.0,2.706,3.0,16.0,20.0,2.764
+Depth 25 - Non Residual,0,0,0,0,0,0,0,0
+Depth 25 - Residual,3.0,22.0,25.0,3.293,3.0,27.0,25.0,3.327
+Depth 30 - Non Residual,0,0,0,0,0,0,0,0
+Depth 30 - Residual,3.0,25.5,30.0,3.882,3.0,31.0,30.0,3.925
