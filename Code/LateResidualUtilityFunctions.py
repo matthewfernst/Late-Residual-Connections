@@ -87,9 +87,9 @@ def concat_iterative_and_batch_data(iterative_data, batch_data):
 
     return np.concatenate((iterative_data, batch_data))
 
-def combine_all_dataframes_to_csv():
-    adam_csvs = glob.glob('Results/Adam/Adam-LearningRate-*.csv')
-    sgd_csvs = glob.glob('Results/SGD/SGD-LearningRate-*.csv')
+def combine_all_dataframes_to_csv(width):
+    adam_csvs = glob.glob(f'Results/Width-{width}/Adam/Adam-LearningRate-*.csv')
+    sgd_csvs = glob.glob(f'Results/Width-{width}/SGD/SGD-LearningRate-*.csv')
 
     current_dataframes_holder = []
 
@@ -108,7 +108,7 @@ def combine_all_dataframes_to_csv():
     sgd_dataframe = pd.concat(current_dataframes_holder, axis=1)
 
     final = pd.concat([adam_dataframe, sgd_dataframe], axis=0)
-    final.to_csv('Results/All-Results.csv', index=False)
+    final.to_csv(f'Results/Width-{width}/All-Results.csv', index=False)
 
 
 def print_starting_experiment_message():
