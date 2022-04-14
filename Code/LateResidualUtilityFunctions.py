@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,11 +17,21 @@ def load_abs_data():
     assert(T.shape == (20, 1))
     return X, T
 
+def save_dataframe_to_csv(dataframe, width, optimizer, filename):
+    directory_path = f'Results/Width-{width}/{optimizer}'
+
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+    
+    full_path = f'{directory_path}/{filename}.csv'
+
+    dataframe.to_csv(full_path, index=False)
+    
+
 def rmse(Y, T):
     return np.sqrt(np.mean((T - Y)**2))
 
 def display_graph(X, T, model, lr, n_hiddens, method, iteration, train_style, did_converge):
-
     depth = f'{len(n_hiddens)}'
     arch = f'[2 for _ in range({len(n_hiddens)})]'
     
@@ -106,6 +117,7 @@ def print_starting_experiment_message():
 def print_current_training_architecture(network_architecture, learning_rate, connection_style, optimizer, color='blue'):
     training_info = f"\t\tNETWORK ARCHITECTURE: [WIDTH: {network_architecture[-1]}, DEPTH: {len(network_architecture)}] OPTIMIZER: {optimizer} LEARNING RATE: {learning_rate} CONNECTION: {connection_style}"
     training_hashes = ''.join(['#' for _ in range(len(" TRAINING "))])
+
     print(colored(f"\t{''.join(['#' for _ in range(len(training_info) // 2)])} TRAINING {''.join(['#' for _ in range(len(training_info) // 2)])}", color))
     print(colored(training_info, color))
     print(colored(f"\t{''.join(['#' for _ in range(len(training_info) // 2)])}{training_hashes}{''.join(['#' for _ in range(len(training_info) // 2)])}", color))

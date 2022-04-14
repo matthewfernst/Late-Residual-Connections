@@ -67,12 +67,12 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
                                     else:
                                         raise ValueError(f'Training Style {training_style} is not supported')
 
-                        row_to_add = lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
-                        dataframe.loc[f'Depth {len(network_architecture)} - {connection_style}'] = row_to_add
+                        dataframe.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
+                                            lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
                         
-                    clear_output(wait=True)
 
-                dataframe.to_csv(f'Results/Width-{network_architectures[-1][-1]}/{optimizer}/{dataframe_title}.csv')
+                lr_utils.save_dataframe_to_csv(dataframe, network_architecture[0], optimizer, dataframe_title)
+                
 
     lr_utils.combine_all_dataframes_to_csv()
     lr_utils.print_end_of_all_training_message()
