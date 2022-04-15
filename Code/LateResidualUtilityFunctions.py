@@ -40,12 +40,12 @@ def graph_results(model, learning_rate, network_architecture, width, optimizer, 
     X, T = load_abs_data()
     depth = f'{len(network_architecture)}'
     color = 'red' if optimizer =='Adam' else 'blue'
-    convergence = 'CONVERGE' if did_converge else 'NO_CONVERGE'
+    convergence = 'Convergence' if did_converge else 'No-Convergence'
 
-    directory_path = f'../Graphs/ResidualConnections/Learing-Rate-{learning_rate}/{training_style}/{optimizer}/{convergence}/'
+    directory_path = f'../Graphs/Width-{width}/{optimizer}/LearningRate-{learning_rate}/{training_style}/{convergence}/Depth-{depth}/'
     make_directory_if_not_exists(directory_path)
 
-    filename = f'Width-{width}-Depth-{depth}-Iteration-{iteration + 1}'
+    filename = f'Iteration-{iteration + 1}'
     full_path = f'{directory_path}{filename}.jpeg'
 
     Y = model.use(X)
