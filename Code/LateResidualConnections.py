@@ -6,16 +6,14 @@ import LateResidualNeuralNetwork
 import LateResidualUtilityFunctions as lr_utils
 
 import time
-from IPython.display import clear_output
 import pandas as pd
 from tqdm import tqdm
 
 def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
 
     convergence_threshold = 0.07
-    isResiduallyConnected = connection_style == 'Residual' 
     
-    model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer, isResiduallyConnected=isResiduallyConnected) 
+    model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer, isResiduallyConnected=(connection_style == 'Residual')) 
     start = time.time()
     model.train(X, T, epochs, learning_rate, training_style, verbose=verbose)
     end = time.time()
@@ -28,25 +26,27 @@ def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate,
         print(f'RMSE {final_rmse:.3f}\n')
 
     dead_neurons, dead_layers = model.dead_neurons()
+    
+    return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time], model)
 
-    return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time])
 
-
-def run_experiments(optimizers, learning_rates, network_architectures, connection_styles, training_styles, iterations, epochs):
+def run_experiments(optimizers, learning_rates, network_architectures, connection_styles, training_styles, iterations, epochs, width, depths):
     X, T = lr_utils.load_abs_data()
 
     dataframe_column_names = ['Iterative - Total Converged', 'Iterative - Amount of Dead Neurons', 'Iterative - Amount of Dead Layers', 'Iterative - Total Time', 
                                     'Batch - Total Converged', 'Batch - Amount of Dead Neurons', 'Batch - Amount of Dead Layers', 'Batch - Total Time']
 
-    dataframe_index_names = ['Depth 2 - Non Residual', 'Depth 2 - Residual', 'Depth 5 - Non Residual', 'Depth 5 - Residual', 'Depth 10 - Non Residual', 'Depth 10 - Residual', 
-                                    'Depth 20 - Non Residual', 'Depth 20 - Residual', 'Depth 25 - Non Residual', 'Depth 25 - Residual', 'Depth 30 - Non Residual', 'Depth 30 - Residual']
-
+    dataframe_index_names = []
+    for depth in depths:
+        dataframe_index_names.append(f'Depth {depth} - Non Residual')
+        dataframe_index_names.append(f'Depth {depth} - Residual')
 
     lr_utils.print_starting_experiment_message()
     
     for optimizer in optimizers:
         for learning_rate in learning_rates:
                 dataframe = pd.DataFrame(columns=dataframe_column_names, index=dataframe_index_names)
+                dataframe.index.name = "Network Architecture"
                 dataframe_title = f"{optimizer}-LearningRate-{learning_rate}"
 
                 for network_architecture in network_architectures:
@@ -55,10 +55,12 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
 
                     for connection_style in connection_styles:
                         lr_utils.print_current_training_architecture(network_architecture, learning_rate, connection_style, optimizer)
-                        for training_style in training_styles: 
-                            for _ in tqdm(range(iterations)):
-                                did_converge, results = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
 
+                        for training_style in training_styles: 
+                            for iteration in tqdm(range(iterations)):
+                                did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
+                                lr_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
+                                
                                 if did_converge:
                                     if training_style == 'Iterative':
                                         converged_iterative_data.append(results)
@@ -71,10 +73,10 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
                                             lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
                         
 
-                lr_utils.save_dataframe_to_csv(dataframe, network_architecture[0], optimizer, dataframe_title)
+                lr_utils.save_dataframe_to_csv(dataframe, width, optimizer, dataframe_title)
                 
 
-    lr_utils.combine_all_dataframes_to_csv()
+    lr_utils.combine_all_dataframes_to_csv(width)
     lr_utils.print_end_of_all_training_message()
 
 
@@ -94,5 +96,5 @@ def run(width, depths, learning_rates, optimizers, epochs):
     iterations = 10
 
     run_experiments(optimizers, learning_rates, network_architectures, 
-                        connection_styles, training_styles, iterations, epochs)
+                        connection_styles, training_styles, iterations, epochs, width, depths)
 

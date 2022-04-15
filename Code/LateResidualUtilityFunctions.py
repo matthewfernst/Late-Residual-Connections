@@ -1,4 +1,6 @@
 import os
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -17,45 +19,42 @@ def load_abs_data():
     assert(T.shape == (20, 1))
     return X, T
 
+def make_directory_if_not_exists(directory_path):
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path)
+
 def save_dataframe_to_csv(dataframe, width, optimizer, filename):
     directory_path = f'Results/Width-{width}/{optimizer}'
 
-    if not os.path.exists(directory_path):
-        os.makedirs(directory_path)
+    make_directory_if_not_exists(directory_path)
     
     full_path = f'{directory_path}/{filename}.csv'
 
-    dataframe.to_csv(full_path, index=False)
+    dataframe.to_csv(full_path, index=True)
     
 
 def rmse(Y, T):
     return np.sqrt(np.mean((T - Y)**2))
 
-def display_graph(X, T, model, lr, n_hiddens, method, iteration, train_style, did_converge):
-    depth = f'{len(n_hiddens)}'
-    arch = f'[2 for _ in range({len(n_hiddens)})]'
-    
-    color = 'blue' if method =='Adam' else 'orange'
+def graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge):
+    X, T = load_abs_data()
+    depth = f'{len(network_architecture)}'
+    color = 'red' if optimizer =='Adam' else 'blue'
+    convergence = 'CONVERGE' if did_converge else 'NO_CONVERGE'
 
-    conv_or_no_conv = 'c' if did_converge else 'nc'
+    directory_path = f'../Graphs/ResidualConnections/Learing-Rate-{learning_rate}/{training_style}/{optimizer}/{convergence}/'
+    make_directory_if_not_exists(directory_path)
 
-    lr_dir = None
-    if lr == 0.01:
-        lr_dir = 'LR0_01'
-    elif lr == 0.001:
-        lr_dir = 'LR0_001'
-    elif lr == 0.1:
-        lr_dir = 'LR0_1'
-    else:
-        raise Exception('{lr} is not a correct learing rate')
+    filename = f'Width-{width}-Depth-{depth}-Iteration-{iteration + 1}'
+    full_path = f'{directory_path}{filename}.jpeg'
 
     Y = model.use(X)
 
     plt.figure(figsize=(10,5))
 
-    plt.suptitle(f'{arch}', fontsize=16)
+    plt.suptitle(f'{optimizer}-Width-{width}-Depth{depth}', fontsize=16)
     plt.subplot(1, 2, 1)
-    plt.plot(model.error_trace, color=color, label=method)
+    plt.plot(model.error_trace, color='orange', label=optimizer)
     plt.xlabel('Epoch')
     plt.ylabel('RMSE')
     plt.ylim((0.0, 0.3))
@@ -63,14 +62,14 @@ def display_graph(X, T, model, lr, n_hiddens, method, iteration, train_style, di
 
     plt.subplot(1, 2, 2)
     
-    plt.plot(Y, '-s', color=color, label=method)
+    plt.plot(Y, '-s', color=color, label=optimizer)
     plt.plot(T, '-o', color='green', label='Target')
     plt.xlabel('Sample')
     plt.ylabel('Target or Predicted')
     plt.legend()
     
-    plt.savefig(f'Graphs/ResidualConnections/{train_style}/{lr_dir}/{method}_depth_{depth}_it{iteration + 1}_{conv_or_no_conv}.jpeg',  bbox_inches = 'tight')
-    plt.close()
+    plt.savefig(full_path, bbox_inches = 'tight')
+    plt.close('all')
 
 def concat_iterative_and_batch_data(iterative_data, batch_data):
     if iterative_data:
@@ -87,9 +86,9 @@ def concat_iterative_and_batch_data(iterative_data, batch_data):
 
     return np.concatenate((iterative_data, batch_data))
 
-def combine_all_dataframes_to_csv():
-    adam_csvs = glob.glob('Results/Adam/Adam-LearningRate-*.csv')
-    sgd_csvs = glob.glob('Results/SGD/SGD-LearningRate-*.csv')
+def combine_all_dataframes_to_csv(width):
+    adam_csvs = glob.glob(f'Results/Width-{width}/Adam/Adam-LearningRate-*.csv')
+    sgd_csvs = glob.glob(f'Results/Width-{width}/SGD/SGD-LearningRate-*.csv')
 
     current_dataframes_holder = []
 
@@ -108,7 +107,7 @@ def combine_all_dataframes_to_csv():
     sgd_dataframe = pd.concat(current_dataframes_holder, axis=1)
 
     final = pd.concat([adam_dataframe, sgd_dataframe], axis=0)
-    final.to_csv('Results/All-Results.csv', index=False)
+    final.to_csv(f'Results/Width-{width}/All-Results.csv', index=False)
 
 
 def print_starting_experiment_message():
