@@ -16,7 +16,7 @@ class NNet(torch.nn.Module):
     def __init__(self, n_inputs, n_hiddens_list, n_outputs, optimizer, isResiduallyConnected=False):
         super().__init__()  # call parent class (torch.nn.Module) constructor
         self.error_trace = []
-        self.optimizer = optimizer
+        self.optimizer_selected = optimizer
         self.isResiduallyConnected = isResiduallyConnected
         # Set self.n_hiddens_per_layer to [] if argument is 0, [], or [0]
         if n_hiddens_list == 0 or n_hiddens_list == [] or n_hiddens_list == [0]:
@@ -72,26 +72,27 @@ class NNet(torch.nn.Module):
         residual_outs = []
         self.layer_outputs = []
         
-        for index, layer in enumerate(self.model):
-            if index != len(self.model)-1:
-                # For Regular Layers          
-                if isinstance(layer, torch.nn.Linear):
-                    x = layer(x)
-                elif isinstance(layer, torch.nn.ReLU):
-                    x = layer(x)
-                    self.layer_outputs.append(x.detach().numpy())
+        for layer in self.model[:-1]:
+            # For Regular Layers          
+            if isinstance(layer, torch.nn.Linear):
+                x = layer(x)
+            elif isinstance(layer, torch.nn.ReLU):
+                x = layer(x)
+                self.layer_outputs.append(x.detach().numpy())
 
-                # For Residual Layers
-                elif isinstance(layer, torch.nn.Sequential):
-                    residual_outs.append(x)
-                else:
-                    raise Exception(f'{layer} is not permitted.')
+            # For Residual Layers
+            elif isinstance(layer, torch.nn.Sequential):
+                residual_outs.append(x)
+            else:
+                raise Exception(f'{layer} is not permitted.')
         
         # Concat all residual outs and normal out
         # push through to the outputlayer
         if self.isResiduallyConnected:
             residual_outs.append(x)
             x = self.output_layer(torch.cat(tuple(residual_outs),dim=1))
+        else:
+            x = self.model[-1](x)
 
         return x
         
@@ -121,12 +122,12 @@ class NNet(torch.nn.Module):
         
         # Set optimizer to Adam / SGD and loss functions to MSELoss
         optimizer = None
-        if self.optimizer == 'Adam':
+        if self.optimizer_selected == 'Adam':
             optimizer = torch.optim.Adam(self.parameters(), lr=learning_rate)
-        elif self.optimizer == 'SGD':
+        elif self.optimizer_selected == 'SGD':
             optimizer = torch.optim.SGD(self.parameters(), lr=learning_rate)
         else:
-            raise Exception(f'Must select \'Adam\' or \'SGD\' Optimizer. Got {self.optimizer}')
+            raise Exception(f'Must select \'Adam\' or \'SGD\' Optimizer. Got {self.optimizer_selected}')
         criterion = torch.nn.MSELoss()
 
         unstndErr = lambda err:(torch.sqrt(err) * self.Tstds)[0]

@@ -6,16 +6,14 @@ import LateResidualNeuralNetwork
 import LateResidualUtilityFunctions as lr_utils
 
 import time
-from IPython.display import clear_output
 import pandas as pd
 from tqdm import tqdm
 
 def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
 
     convergence_threshold = 0.07
-    isResiduallyConnected = connection_style == 'Residual' 
     
-    model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer, isResiduallyConnected=isResiduallyConnected) 
+    model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer, isResiduallyConnected=(connection_style == 'Residual')) 
     start = time.time()
     model.train(X, T, epochs, learning_rate, training_style, verbose=verbose)
     end = time.time()
@@ -28,8 +26,8 @@ def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate,
         print(f'RMSE {final_rmse:.3f}\n')
 
     dead_neurons, dead_layers = model.dead_neurons()
-
-    return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time])
+    
+    return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time], model)
 
 
 def run_experiments(optimizers, learning_rates, network_architectures, connection_styles, training_styles, iterations, epochs, width, depths):
@@ -57,11 +55,12 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
 
                     for connection_style in connection_styles:
                         lr_utils.print_current_training_architecture(network_architecture, learning_rate, connection_style, optimizer)
-                        
-                        for training_style in training_styles: 
-                            for _ in tqdm(range(iterations)):
-                                did_converge, results = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
 
+                        for training_style in training_styles: 
+                            for iteration in tqdm(range(iterations)):
+                                did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
+                                lr_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
+                                
                                 if did_converge:
                                     if training_style == 'Iterative':
                                         converged_iterative_data.append(results)
