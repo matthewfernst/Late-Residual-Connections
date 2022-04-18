@@ -11,13 +11,8 @@ Below is an example of an abstracted view of traditional versus late residual ne
 
 ## Setup and How to Run
 
-There are two ways to run the code in this repository. The first is to run the Jupyter Notebook [LateResidualConnections.ipynb](Code/LateResidualConnections.ipynb). 
-Or you can be run with the python script [run_notebook_script.py](Code/run_notebook_script.py).
-
-Both methods will run the code in the same way. For a more visual representation of the code, you can run the notebook. 
-For a more customization of experiment parameters, you can run the python script. 
-
-How to run both methods is documented below.
+[run_experiment_script.py](Code/run_experiment_script.py) is a script that can be used to run the experiments.
+Below explains how to create an environment and run the script.
 
 ### Creating Environment
 
@@ -30,15 +25,10 @@ python3 -m pip install --upgrade pip
 python3 -m pip install -r requirements.txt
 ```
 
-### Running the Notebook
-
-To run the notebook, simply go to the [LateResidualConnections.ipynb](Code/LateResidualConnections.ipynb) and run the 
-notebook as normal. To change the experiment parameters, you can edit the parameters in the notebook in the last cell.
-
 
 ### Running the Script
 
-To run the script, run [run_notebook_script.py](Code/run_notebook_script.py). This script has argument parasing to change the following parameters
+To run the script, run [run_experiment_script.py](Code/run_experiment_script.py). This script has argument parasing to change the following parameters
     
     - "--width": The widths of the networks.
     - "--depths": The depths of the networks.
@@ -48,7 +38,7 @@ To run the script, run [run_notebook_script.py](Code/run_notebook_script.py). Th
 
 To see more information run 
 ```bash 
-run_notebook_script.py --help
+run_experiment_script.py --help
 ```
 
 
