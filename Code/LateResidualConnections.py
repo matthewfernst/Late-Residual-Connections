@@ -3,7 +3,6 @@
 
 import time
 import pandas as pd
-import numpy as np
 from tqdm import tqdm
 
 # Personal Files Import 
@@ -33,9 +32,23 @@ def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate,
     
     return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time], model)
 
+def heart_of_experiment(epochs, width, network_architecture, optimizer, learning_rate, connection_style, training_style, iteration, converged_iterative_data, converged_batch_data):
+    X, T = dataframe_utils.load_abs_data()
+
+    did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
+    graph_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
+    
+    if did_converge:
+        if training_style == 'Iterative':
+            converged_iterative_data.append(results)
+        elif training_style == 'Batch':
+            converged_batch_data.append(results)
+        else:
+            raise ValueError(f'Training Style {training_style} is not supported')
+
 
 def run_experiments(optimizers, learning_rates, network_architectures, connection_styles, training_styles, iterations, epochs, width, depths):
-    X, T = dataframe_utils.load_abs_data()
+    
 
     dataframe_column_names = ['Iterative - Total Converged', 'Iterative - Amount of Dead Neurons', 'Iterative - Amount of Dead Layers', 'Iterative - Total Time', 
                                     'Batch - Total Converged', 'Batch - Amount of Dead Neurons', 'Batch - Amount of Dead Layers', 'Batch - Total Time']
@@ -62,23 +75,16 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
 
                         for training_style in training_styles: 
                             for iteration in tqdm(range(iterations)):
-                                did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
-                                graph_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
-                                
-                                if did_converge:
-                                    if training_style == 'Iterative':
-                                        converged_iterative_data.append(results)
-                                    elif training_style == 'Batch':
-                                        converged_batch_data.append(results)
-                                    else:
-                                        raise ValueError(f'Training Style {training_style} is not supported')
+
+                                heart_of_experiment(epochs, width, network_architecture, optimizer, 
+                                        learning_rate, connection_style, training_style, iteration,
+                                        converged_iterative_data, converged_batch_data)
 
                         dataframe.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
-                                            lr_utils.concat_iterative_and_batch_data(np.array(converged_iterative_data), np.array(converged_batch_data))
+                                            lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
                         
-                dataframe.replace(to_replace=np.nan, value=' ', inplace=True)
-                dataframe.insert(len(dataframe.columns), ' ', [' ' for _ in range(len(depths) * 2 + 1)], True)
-                dataframe_utils.save_dataframe_to_csv(dataframe, width, optimizer, learning_rate)
+
+                dataframe_utils.save_dataframe_to_csv(dataframe, width, depths, optimizer, learning_rate)
                 
     dataframe_utils.combine_all_dataframes_to_csv(width, optimizers)
     lr_utils.print_end_of_all_training_message()

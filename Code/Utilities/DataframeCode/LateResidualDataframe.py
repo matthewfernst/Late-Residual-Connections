@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import glob
 
 def load_abs_data():
@@ -25,7 +26,7 @@ def make_directory_if_not_exists(directory_path):
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
 
-def save_dataframe_to_csv(dataframe, width, optimizer, learning_rate):
+def save_dataframe_to_csv(dataframe, width, depths, optimizer, learning_rate):
     '''
     Saves a dataframe to a csv file. The file is saved based on the width, optimizer, and learning rate.
     '''
@@ -34,6 +35,9 @@ def save_dataframe_to_csv(dataframe, width, optimizer, learning_rate):
     make_directory_if_not_exists(directory_path)
     
     full_path = f'{directory_path}/{optimizer}-LearningRate-{learning_rate}.csv'
+
+    dataframe.replace(to_replace=np.nan, value=' ', inplace=True)
+    dataframe.insert(len(dataframe.columns), ' ', [' ' for _ in range(len(depths) * 2 + 1)], True)
 
     dataframe.to_csv(full_path, index=True)
 

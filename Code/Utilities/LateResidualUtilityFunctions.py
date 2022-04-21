@@ -13,6 +13,9 @@ def concat_iterative_and_batch_data(iterative_data, batch_data):
     If either of the iterative or batch data is empty, then the data is 
     changed to [0, 0, 0, 0].
     '''
+    iterative_data = np.array(iterative_data)
+    batch_data = np.array(batch_data)
+    
     if iterative_data.size != 0:
         iterative_data = np.around(np.insert(iterative_data, 0, iterative_data.shape[0], axis=1), decimals=3)
         iterative_data = np.around(np.median(iterative_data, axis=0), decimals=3)
