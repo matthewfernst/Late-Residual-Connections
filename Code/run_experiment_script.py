@@ -10,5 +10,4 @@ parser.add_argument('-e', '--epochs', type=int, default=3000, help='Number of ep
 
 if __name__ == "__main__":
     args = vars(parser.parse_args())
-    print(args)
     lrc.run(args['width'], args['depths'], args['learning_rates'], args['optimizers'], args['epochs'])

@@ -7,6 +7,7 @@ import LateResidualUtilityFunctions as lr_utils
 
 import time
 import pandas as pd
+import numpy as np
 from tqdm import tqdm
 
 def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
@@ -40,6 +41,7 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
     for depth in depths:
         dataframe_index_names.append(f'Depth {depth} - Non Residual')
         dataframe_index_names.append(f'Depth {depth} - Residual')
+    dataframe_index_names.append(' ')
 
     lr_utils.print_starting_experiment_message()
     
@@ -47,7 +49,6 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
         for learning_rate in learning_rates:
                 dataframe = pd.DataFrame(columns=dataframe_column_names, index=dataframe_index_names)
                 dataframe.index.name = "Network Architecture"
-                dataframe_title = f"{optimizer}-LearningRate-{learning_rate}"
 
                 for network_architecture in network_architectures:
                     converged_iterative_data = []
@@ -70,23 +71,23 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
                                         raise ValueError(f'Training Style {training_style} is not supported')
 
                         dataframe.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
-                                            lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
+                                            lr_utils.concat_iterative_and_batch_data(np.array(converged_iterative_data), np.array(converged_batch_data))
                         
-
-                lr_utils.save_dataframe_to_csv(dataframe, width, optimizer, dataframe_title)
+                dataframe.replace(to_replace=np.nan, value=' ', inplace=True)
+                dataframe.insert(len(dataframe.columns), ' ', [' ' for _ in range(len(depths) * 2 + 1)], True)
+                lr_utils.save_dataframe_to_csv(dataframe, width, optimizer, learning_rate)
                 
-
-    lr_utils.combine_all_dataframes_to_csv(width)
+    lr_utils.combine_all_dataframes_to_csv(width, optimizers)
     lr_utils.print_end_of_all_training_message()
 
 
 
-'''
-This python file is intended to be used with the 'run_notebook_script.py' file. 
-Experiment parameters are passed in using this file.
-'''
 
 def run(width, depths, learning_rates, optimizers, epochs):
+    '''
+    This python file is intended to be used with the 'run_notebook_script.py' file. 
+    Experiment parameters are passed as command line aruments.
+    '''
     network_architectures = []
     for depth in depths:
         network_architectures.append([width for _ in range(depth)])
