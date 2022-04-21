@@ -1,6 +1,4 @@
-# Basics 
-jupyter
-ipython
+# Utilities 
 termcolor
 tqdm
 glob
