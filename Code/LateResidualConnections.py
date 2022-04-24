@@ -1,9 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import time
 import pandas as pd
 from tqdm import tqdm
+import os
 
 # Personal Files Import 
 import LateResidualPyTorch.LateResidualNeuralNetwork as LateResidualNeuralNetwork
@@ -82,12 +80,13 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
 
                         df.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
                                             lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
-                        
+                        os.system('cls' if os.name == 'nt' else 'clear')
 
                 df_utils.save_df_to_csv(df, width, depths, optimizer, learning_rate)
                 graph_utils.graph_all_results(width)
 
     df_utils.combine_all_dfs_to_csv(width, optimizers)
+    os.system('cls' if os.name == 'nt' else 'clear')
     lr_utils.print_end_of_all_training_message()
 
 
