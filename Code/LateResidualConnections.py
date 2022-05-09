@@ -1,15 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import time
 import pandas as pd
 from tqdm import tqdm
+import os
 
 # Personal Files Import 
 import LateResidualPyTorch.LateResidualNeuralNetwork as LateResidualNeuralNetwork
 import Utilities.LateResidualUtilityFunctions as lr_utils
 import Utilities.GraphingCode.LateResidualGraphing as graph_utils
-import Utilities.DataframeCode.LateResidualDataframe as dataframe_utils
+import Utilities.DataframeCode.LateResidualDataframe as df_utils
 
 
 def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
@@ -33,7 +31,7 @@ def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate,
     return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time], model)
 
 def heart_of_experiment(epochs, width, network_architecture, optimizer, learning_rate, connection_style, training_style, iteration, converged_iterative_data, converged_batch_data):
-    X, T = dataframe_utils.load_abs_data()
+    X, T = df_utils.load_abs_data()
 
     did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
     graph_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
@@ -50,21 +48,21 @@ def heart_of_experiment(epochs, width, network_architecture, optimizer, learning
 def run_experiments(optimizers, learning_rates, network_architectures, connection_styles, training_styles, iterations, epochs, width, depths):
     
 
-    dataframe_column_names = ['Iterative - Total Converged', 'Iterative - Amount of Dead Neurons', 'Iterative - Amount of Dead Layers', 'Iterative - Total Time', 
+    df_column_names = ['Iterative - Total Converged', 'Iterative - Amount of Dead Neurons', 'Iterative - Amount of Dead Layers', 'Iterative - Total Time', 
                                     'Batch - Total Converged', 'Batch - Amount of Dead Neurons', 'Batch - Amount of Dead Layers', 'Batch - Total Time']
 
-    dataframe_index_names = []
+    df_index_names = []
     for depth in depths:
-        dataframe_index_names.append(f'Depth {depth} - Non Residual')
-        dataframe_index_names.append(f'Depth {depth} - Residual')
-    dataframe_index_names.append(' ')
+        df_index_names.append(f'Depth {depth} - Non Residual')
+        df_index_names.append(f'Depth {depth} - Residual')
+    df_index_names.append(' ')
 
     lr_utils.print_starting_experiment_message()
     
     for optimizer in optimizers:
         for learning_rate in learning_rates:
-                dataframe = pd.DataFrame(columns=dataframe_column_names, index=dataframe_index_names)
-                dataframe.index.name = "Network Architecture"
+                df = pd.DataFrame(columns=df_column_names, index=df_index_names)
+                df.index.name = "Network Architecture"
 
                 for network_architecture in network_architectures:
                     converged_iterative_data = []
@@ -80,13 +78,15 @@ def run_experiments(optimizers, learning_rates, network_architectures, connectio
                                         learning_rate, connection_style, training_style, iteration,
                                         converged_iterative_data, converged_batch_data)
 
-                        dataframe.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
+                        df.loc[f'Depth {len(network_architecture)} - {connection_style}'] = \
                                             lr_utils.concat_iterative_and_batch_data(converged_iterative_data, converged_batch_data)
-                        
+                        os.system('cls' if os.name == 'nt' else 'clear')
 
-                dataframe_utils.save_dataframe_to_csv(dataframe, width, depths, optimizer, learning_rate)
-                
-    dataframe_utils.combine_all_dataframes_to_csv(width, optimizers)
+                df_utils.save_df_to_csv(df, width, depths, optimizer, learning_rate)
+                graph_utils.graph_all_results(width)
+
+    df_utils.combine_all_dfs_to_csv(width, optimizers)
+    os.system('cls' if os.name == 'nt' else 'clear')
     lr_utils.print_end_of_all_training_message()
 
 
