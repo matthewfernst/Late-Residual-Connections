@@ -2,11 +2,11 @@ import numpy as np
 from termcolor import colored
 
 
-def rmse(Y, T):
+def rmse(y, t):
     """
     Calculates the root mean squared error between the predicted values and the target values.
     """
-    return np.sqrt(np.mean((T - Y) ** 2))
+    return np.sqrt(np.mean((t - y) ** 2))
 
 
 def concat_iterative_and_batch_data(iterative_data, batch_data):

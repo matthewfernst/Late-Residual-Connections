@@ -18,6 +18,7 @@ class NNet(torch.nn.Module):
         self.error_trace = []
         self.optimizer_selected = optimizer
         self.isResiduallyConnected = isResiduallyConnected
+        
         # Set self.n_hiddens_per_layer to [] if argument is 0, [], or [0]
         if n_hiddens_list == 0 or n_hiddens_list == [] or n_hiddens_list == [0]:
             layers = torch.nn.Linear(n_inputs, n_outputs)
@@ -56,10 +57,10 @@ class NNet(torch.nn.Module):
 
         self.model = torch.nn.Sequential(*layers)
 
-        self.Xmeans = None
-        self.Xstds = None
-        self.Tmeans = None
-        self.Tstds = None
+        self.x_means = None
+        self.x_stds = None
+        self.t_means = None
+        self.t_stds = None
 
         
     def get_residual_layer(self):
@@ -97,27 +98,27 @@ class NNet(torch.nn.Module):
         return x
         
 
-    def train(self, X, T, epochs, learning_rate, training_style, verbose=True):
+    def train(self, x, t, epochs, learning_rate, training_style, verbose=True):
 
         # Set data matrices to torch.tensors if not already.
-        if not isinstance(X, torch.Tensor):
-            X = torch.from_numpy(X).float()
-        if not isinstance(T, torch.Tensor):
-            T = torch.from_numpy(T).float()
+        if not isinstance(x, torch.Tensor):
+            x = torch.from_numpy(x).float()
+        if not isinstance(t, torch.Tensor):
+            t = torch.from_numpy(t).float()
             
         # Calculate standardization parameters if not already calculated
-        if self.Xmeans is None:
-            self.Xmeans = X.mean(0)
-            self.Xstds = X.std(0)
-            self.Xstds[self.Xstds == 0] = 1
-            self.Tmeans = T.mean(0)
-            self.Tstds = T.std(0)
-            self.Tstds[self.Tstds == 0] = 1
+        if self.x_means is None:
+            self.x_means = x.mean(0)
+            self.x_stds = x.std(0)
+            self.x_stds[self.x_stds == 0] = 1
+            self.t_means = t.mean(0)
+            self.t_stds = t.std(0)
+            self.t_stds[self.t_stds == 0] = 1
 
             
         # Standardize inputs and targets
-        X = (X - self.Xmeans) / self.Xstds
-        T = (T - self.Tmeans) / self.Tstds
+        x = (x - self.x_means) / self.x_stds
+        t = (t - self.t_means) / self.t_stds
         
         
         # Set optimizer to Adam / SGD and loss functions to MSELoss
@@ -130,17 +131,17 @@ class NNet(torch.nn.Module):
             raise Exception(f'Must select \'Adam\' or \'SGD\' Optimizer. Got {self.optimizer_selected}')
         criterion = torch.nn.MSELoss()
 
-        unstndErr = lambda err:(torch.sqrt(err) * self.Tstds)[0]
+        unstndErr = lambda err:(torch.sqrt(err) * self.t_stds)[0]
 
         for epoch in range(epochs):
             
             # Compute Prediction and loss
             if training_style == 'Batch':
-                Y = self.forward(X)
-                loss = criterion(T, Y)
+                y = self.forward(x)
+                loss = criterion(t, y)
             elif training_style == 'Iterative':
-                Y = self.forward(X[epoch % len(X)].reshape(-1,1))
-                loss = criterion(T[epoch % len(T)].reshape(-1,1), Y)
+                y = self.forward(x[epoch % len(x)].reshape(-1,1))
+                loss = criterion(t[epoch % len(t)].reshape(-1,1), y)
             else:
                 raise exception(f'Training style must be \'Batch\' or \'Iterative\'. Got {training_style}')
             
@@ -155,21 +156,21 @@ class NNet(torch.nn.Module):
                 print(f'Epoch {epoch + 1}: RMSE {self.error_trace[-1]:.3f}')
             
 
-    def use(self, X):
+    def use(self, x):
  
        # Set input matrix to torch.tensors if not already.
-        if not isinstance(X, torch.Tensor):
-            X = torch.from_numpy(X).float()
+        if not isinstance(x, torch.Tensor):
+            x = torch.from_numpy(x).float()
 
-        # Standardize X
-        X = (X - self.Xmeans) / self.Xstds
+        # Standardize x
+        x = (x - self.x_means) / self.x_stds
         
-        # Do forward pass and unstandardize resulting output. Assign to variable Y.
-        Y = self.forward(X)
-        Y = (Y * self.Tstds) + self.Tmeans
-        # Return output Y after detaching from computation graph and converting to numpy
+        # Do forward pass and unstandardize resulting output. Assign to variable y.
+        y = self.forward(x)
+        y = (y * self.t_stds) + self.t_means
+        # Return output y after detaching from computation graph and converting to numpy
 
-        return Y.detach().numpy()
+        return y.detach().numpy()
 
 
     def dead_neurons(self):

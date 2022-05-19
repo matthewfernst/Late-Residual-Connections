@@ -10,17 +10,17 @@ import Utilities.GraphingCode.LateResidualGraphing as graph_utils
 import Utilities.DataframeCode.LateResidualDataframe as df_utils
 
 
-def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
+def run_experiment(x, t, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style, verbose=False):
 
     convergence_threshold = 0.07
     
     model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer, isResiduallyConnected=(connection_style == 'Residual')) 
     start = time.time()
-    model.train(X, T, epochs, learning_rate, training_style, verbose=verbose)
+    model.train(x, t, epochs, learning_rate, training_style, verbose=verbose)
     end = time.time()
     total_time = end - start
-    Y = model.use(X)
-    final_rmse = lr_utils.rmse(Y, T)
+    Y = model.use(x)
+    final_rmse = lr_utils.rmse(Y, t)
     
     if verbose:
         print(f'Total Time to Train {(total_time):.3f} seconds')
@@ -31,9 +31,9 @@ def run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate,
     return (final_rmse <= convergence_threshold, [dead_neurons, dead_layers, total_time], model)
 
 def heart_of_experiment(epochs, width, network_architecture, optimizer, learning_rate, connection_style, training_style, iteration, converged_iterative_data, converged_batch_data):
-    X, T = df_utils.load_abs_data()
+    x, t = df_utils.load_abs_data()
 
-    did_converge, results, model = run_experiment(X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
+    did_converge, results, model = run_experiment(x, t, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
     graph_utils.graph_results(model, learning_rate, network_architecture, width, optimizer, iteration, training_style, did_converge)
     
     if did_converge:

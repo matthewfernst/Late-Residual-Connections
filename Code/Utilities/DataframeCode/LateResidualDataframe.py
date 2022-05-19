@@ -10,15 +10,15 @@ def load_abs_data():
     """
     # print current directory
     df = pd.read_csv('Utilities/DataframeCode/ABSdata.csv')
-    X = df['X'].values
-    X = X.reshape(-1, 1)
+    x = df['X'].values
+    x = x.reshape(-1, 1)
 
-    T = df['T'].values
-    T = T.reshape(-1, 1)
+    t = df['T'].values
+    t = t.reshape(-1, 1)
 
-    assert (X.shape == (20, 1))
-    assert (T.shape == (20, 1))
-    return X, T
+    assert (x.shape == (20, 1))
+    assert (t.shape == (20, 1))
+    return x, t
 
 
 def make_directory_if_not_exists(directory_path):
