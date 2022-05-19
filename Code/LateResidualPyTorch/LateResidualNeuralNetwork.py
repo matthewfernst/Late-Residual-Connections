@@ -15,6 +15,14 @@ class NNet(torch.nn.Module):
     
     def __init__(self, n_inputs, n_hiddens_list, n_outputs, optimizer, isResiduallyConnected=False):
         super().__init__()  # call parent class (torch.nn.Module) constructor
+
+        if torch.backends.mps.is_available():
+            self.device = torch.device('mps')
+        elif torch.cuda.is_available():
+            self.device = torch.device('cuda')
+        else:
+            self.device = torch.device('cpu')
+            
         self.error_trace = []
         self.optimizer_selected = optimizer
         self.isResiduallyConnected = isResiduallyConnected
@@ -79,7 +87,7 @@ class NNet(torch.nn.Module):
                 x = layer(x)
             elif isinstance(layer, torch.nn.ReLU):
                 x = layer(x)
-                self.layer_outputs.append(x.detach().numpy())
+                self.layer_outputs.append(x.cpu().detach().numpy())
 
             # For Residual Layers
             elif isinstance(layer, torch.nn.Sequential):
