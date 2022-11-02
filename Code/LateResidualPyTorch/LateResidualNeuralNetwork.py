@@ -12,7 +12,6 @@ class ResidualBlock(torch.nn.Module):
 
 
 class NNet(torch.nn.Module):
-    
     def __init__(self, n_inputs, n_hiddens_list, n_outputs, optimizer, isResiduallyConnected=False):
         super().__init__()  # call parent class (torch.nn.Module) constructor
 
@@ -64,6 +63,7 @@ class NNet(torch.nn.Module):
             layers.append(torch.nn.Linear(n_inputs, n_outputs))
 
         self.model = torch.nn.Sequential(*layers)
+        self.model.to(self.device)
 
         self.x_means = None
         self.x_stds = None
@@ -123,6 +123,16 @@ class NNet(torch.nn.Module):
             self.t_stds = t.std(0)
             self.t_stds[self.t_stds == 0] = 1
 
+        if self.device != torch.device('cpu'):
+            self.x_means = self.x_means.to(self.device)
+            self.x_stds = self.x_stds.to(self.device)
+            self.t_means = self.t_means.to(self.device)
+            self.t_stds = self.t_stds.to(self.device)
+
+            x = x.to(self.device)
+            t = t.to(self.device)
+            self = self.to(self.device)
+
             
         # Standardize inputs and targets
         x = (x - self.x_means) / self.x_stds
@@ -171,12 +181,16 @@ class NNet(torch.nn.Module):
             x = torch.from_numpy(x).float()
 
         # Standardize x
+        if self.device != torch.device('cpu'):
+            x = x.to(self.device)
         x = (x - self.x_means) / self.x_stds
         
         # Do forward pass and unstandardize resulting output. Assign to variable y.
         y = self.forward(x)
         y = (y * self.t_stds) + self.t_means
         # Return output y after detaching from computation graph and converting to numpy
+        if self.device != torch.device('cpu'):
+            y = y.cpu()
 
         return y.detach().numpy()
 
