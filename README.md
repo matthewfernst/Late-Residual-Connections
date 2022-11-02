@@ -33,7 +33,7 @@ To run the script, run [run_experiment_script.py](Code/run_experiment_script.py)
     - "--width": The widths of the networks.
     - "--depths": The depths of the networks.
     - "--lr": The learning rates of the networks.
-    - '--optimizers': The optimizers of the networks.
+    - "--optimizers": The optimizers of the networks.
     - "--epochs": The number of epochs to train each network.
 
 To see more information run 
