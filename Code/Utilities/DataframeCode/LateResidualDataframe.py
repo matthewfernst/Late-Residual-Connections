@@ -8,10 +8,9 @@ def load_abs_data():
     """
     Loads the data from the ABSdata.csv file.
     """
-    # print current directory
-    df = pd.read_csv('Utilities/DataframeCode/ABSdata.csv')
-    x = df['X'].values
-    x = x.reshape(-1, 1)
+    df = pd.read_csv('Code/Utilities/DataframeCode/ABSdata.csv')
+    X = df['X'].values
+    X = X.reshape(-1, 1)
 
     t = df['T'].values
     t = t.reshape(-1, 1)

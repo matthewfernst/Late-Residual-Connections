@@ -36,6 +36,8 @@ def graph_results(model, learning_rate, network_architecture, width, optimizer, 
 
     plt.suptitle(f'{optimizer}-Width-{width}-Depth{depth}', fontsize=16)
     plt.subplot(1, 2, 1)
+    if model.device != 'cpu':
+        model.error_trace = [tensor.cpu().detach().numpy() for tensor in model.error_trace]
     plt.plot(model.error_trace, color='orange', label=optimizer)
     plt.xlabel('Epoch')
     plt.ylabel('RMSE')
