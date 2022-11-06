@@ -45,7 +45,7 @@ docker compose up
 A prebuilt image can also be pulled from Docker Hub.
 
 ```bash
-docker pull matthewernst/late-residual-connections
+docker pull mfernst/late-residual-connections
 ```
 
 
