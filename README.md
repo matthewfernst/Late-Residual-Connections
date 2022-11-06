@@ -28,17 +28,24 @@ python3 -m pip install -r requirements.txt
 
 ### Running the Script
 
-To run the script, run [run_experiment_script.py](Code/run_experiment_script.py). This script has argument parasing to change the following parameters
+To run the script, run [run_experiment_script.py](Code/run_experiment_script.py). This script looks at the [environment variables file](experiment_vars.yml) and runs the experiments based on the variables in the file. Change these to try different experiments. Below is a list of the variables and what they do.
     
-    - "--width": The widths of the networks.
-    - "--depths": The depths of the networks.
-    - "--lr": The learning rates of the networks.
-    - "--optimizers": The optimizers of the networks.
-    - "--epochs": The number of epochs to train each network.
+    - width: The widths of the networks.
+    - depths: The depths of the networks.
+    - learning_rates: The learning rates of the networks.
+    - optimizers: The optimizers of the networks.
+    - epochs: The number of epochs to train each network.
 
-To see more information run 
-```bash 
-run_experiment_script.py --help
+### Docker 
+The code in this repository can also be run in a Docker container to avoid any issues with setting up the environment. To run the code in a Docker container, simple run the following command.
+
+```bash
+docker compose up
+```
+A prebuilt image can also be pulled from Docker Hub.
+
+```bash
+docker pull matthewernst/late-residual-connections
 ```
 
 

@@ -1,7 +1,8 @@
 # Utilities 
+pyyaml
 termcolor
-tqdm
-glob
+alive_progress
+glob2
 
 # Data Manipulation
 matplotlib

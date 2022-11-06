@@ -9,8 +9,8 @@ def load_abs_data():
     Loads the data from the ABSdata.csv file.
     """
     df = pd.read_csv('Code/Utilities/DataframeCode/ABSdata.csv')
-    X = df['X'].values
-    X = X.reshape(-1, 1)
+    x = df['X'].values
+    x = x.reshape(-1, 1)
 
     t = df['T'].values
     t = t.reshape(-1, 1)
@@ -49,7 +49,7 @@ def combine_all_dfs_to_csv(width, optimizers):
     Combines all the dataframes for a given width and optimizer into one dataframe.
     The dataframe is saved to the Results' directory as 'AllData.csv' in the directory for the width.
     """
-
+    print("IN HERE")
     def get_combined_optimizer_csvs(optimizer):
         optimizer_csvs = glob.glob(f'Results/Width-{width}/{optimizer}/{optimizer}-LearningRate-*.csv')
         df_holder = []

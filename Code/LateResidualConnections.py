@@ -36,7 +36,7 @@ def heart_of_experiment(epochs, width, network_architecture, optimizer, learning
     x, t = df_utils.load_abs_data()
 
     did_converge, results, model = run_experiment(
-        X, T, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
+        x, t, epochs, network_architecture, optimizer, learning_rate, connection_style, training_style)
     graph_utils.graph_results(model, learning_rate, network_architecture,
                               width, optimizer, iteration, training_style, did_converge)
 

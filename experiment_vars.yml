@@ -1,0 +1,5 @@
+width: 2
+depths: [2, 5, 10, 20, 25, 30]
+learning_rates: [0.01, 0.001, 0.1]
+optimizers: ['Adam', 'SGD']
+epochs: 3000
