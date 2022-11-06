@@ -50,5 +50,3 @@ docker pull matthewernst/late-residual-connections
 
 
 
-
-
