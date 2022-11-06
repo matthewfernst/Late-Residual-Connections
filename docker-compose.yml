@@ -1,0 +1,6 @@
+services:
+  late-residual:
+    image: late-residual
+    build: .
+    
+  

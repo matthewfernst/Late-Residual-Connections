@@ -49,7 +49,7 @@ def combine_all_dfs_to_csv(width, optimizers):
     Combines all the dataframes for a given width and optimizer into one dataframe.
     The dataframe is saved to the Results' directory as 'AllData.csv' in the directory for the width.
     """
-
+    print("IN HERE")
     def get_combined_optimizer_csvs(optimizer):
         optimizer_csvs = glob.glob(f'Results/Width-{width}/{optimizer}/{optimizer}-LearningRate-*.csv')
         df_holder = []
