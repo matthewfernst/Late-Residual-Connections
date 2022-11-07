@@ -42,10 +42,11 @@ The code in this repository can also be run in a Docker container to avoid any i
 ```bash
 docker compose up
 ```
-A prebuilt image can also be pulled from Docker Hub.
+A prebuilt image can also be pulled from Docker Hub or GitHub Container Registry.
 
 ```bash
-docker pull mfernst/late-residual-connections
+docker pull mfernst/late-residual-connections # Docker Hub
+docker pull ghcr.io/matthewfernst/lateresidualconnections:main # GitHub Container Registry
 ```
 
 
