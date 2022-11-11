@@ -12,15 +12,18 @@ class ResidualBlock(torch.nn.Module):
 
 
 class NNet(torch.nn.Module):
-    def __init__(self, n_inputs, n_hiddens_list, n_outputs, optimizer, isResiduallyConnected=False):
+    def __init__(self, n_inputs, n_hiddens_list, n_outputs, optimizer, isResiduallyConnected=False, device=None):
         super().__init__()  # call parent class (torch.nn.Module) constructor
 
-        if torch.backends.mps.is_available():
-            self.device = torch.device('mps')
-        elif torch.cuda.is_available():
-            self.device = torch.device('cuda')
-        else:
+        if device is None:
             self.device = torch.device('cpu')
+        else:
+            if torch.backends.mps.is_available():
+                self.device = torch.device('mps')
+            elif torch.cuda.is_available():
+                self.device = torch.device('cuda')
+            else:
+                self.device = torch.device('cpu')
             
         self.error_trace = []
         self.optimizer_selected = optimizer
