@@ -5,7 +5,7 @@ import numpy as np
 from termcolor import colored
 
 
-def rmse(y: torch.tensor, t: torch.tensor):
+def rmse(y: torch.tensor, t: torch.tensor) -> np.ndarray:
     """
     Calculates the root mean squared error between the predicted values and the target values.
     :param y: The predicted values.
@@ -14,7 +14,7 @@ def rmse(y: torch.tensor, t: torch.tensor):
     return np.sqrt(np.mean((t - y) ** 2))
 
 
-def concat_iterative_and_batch_data(iterative_data: List[float], batch_data: List[float]):
+def concat_iterative_and_batch_data(iterative_data: List[float], batch_data: List[float]) -> np.ndarray:
     """
     Concatenates the iterative and batch data and returns the result.
     If either of the iterative or batch data is empty, then the data is
@@ -34,7 +34,7 @@ def concat_iterative_and_batch_data(iterative_data: List[float], batch_data: Lis
     return np.concatenate((configure_data(iterative_data), configure_data(batch_data)))
 
 
-def log_starting_experiment_message():
+def log_starting_experiment_message() -> None:
     """
     Logs a message to the console indicating that the experiment is starting.
     """
@@ -43,7 +43,7 @@ def log_starting_experiment_message():
 
 
 def log_current_training_architecture(network_architecture: List[int], learning_rate: float, connection_style: str,
-                                      optimizer: str, color: str = "blue"):
+                                      optimizer: str, color: str = "blue") -> None:
     """
     Logs a message to the console indicating the current training architecture.
     :param network_architecture: The network architecture.
@@ -60,7 +60,7 @@ def log_current_training_architecture(network_architecture: List[int], learning_
     print(colored(training_info, color))
     print(colored(f"\t{'#' * (len(training_info) // 2)}{training_hashes}{'#' * (len(training_info) // 2)}", color))
 
-def log_end_of_all_training_message():
+def log_end_of_all_training_message() -> None:
     """
     Logs a message to the console indicating that the experiment is ending.
     """
