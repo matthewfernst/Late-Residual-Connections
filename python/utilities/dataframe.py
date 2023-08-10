@@ -8,17 +8,17 @@ import glob
 
 def load_abs_data() -> Tuple[np.ndarray, np.ndarray]:
     """
-    Loads the data from the ABSdata.csv file.
+    Loads the data from the abs_data.csv file.
     """
-    df = pd.read_csv("Code/Utilities/DataframeCode/ABSdata.csv")
+    df = pd.read_csv(os.path.abspath('utilities/abs_data.csv'))
     x = df["X"].values
     x = x.reshape(-1, 1)
 
     t = df["T"].values
     t = t.reshape(-1, 1)
 
-    assert (x.shape == (20, 1))
-    assert (t.shape == (20, 1))
+    assert x.shape == (20, 1)
+    assert t.shape == (20, 1)
     return x, t
 
 
@@ -52,7 +52,7 @@ def save_df_to_csv(df: pd.DataFrame, width: int, depths: List[int], optimizer: s
     df.to_csv(full_path, index=True)
 
 
-def combine_all_dfs_to_csv(width: int, optimizers: str) -> None:
+def combine_all_dfs_to_csv(width: int, optimizers: List[str]) -> None:
     """
     Combines all the dataframes for a given width and optimizer into one dataframe.
     The dataframe is saved to the Results' directory as 'AllData.csv' in the directory for the width.

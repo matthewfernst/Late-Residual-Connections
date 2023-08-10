@@ -34,7 +34,7 @@ def concat_iterative_and_batch_data(iterative_data: List[float], batch_data: Lis
     return np.concatenate((configure_data(iterative_data), configure_data(batch_data)))
 
 
-def log_starting_experiment_message() -> None:
+def log_starting_experiment_message():
     """
     Logs a message to the console indicating that the experiment is starting.
     """

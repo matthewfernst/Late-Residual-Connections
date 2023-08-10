@@ -6,12 +6,12 @@ This repository is a cleaned version of my research on the vanishing gradient pr
 
 Below is an example of an abstracted view of traditional versus late residual neural networks. Each hidden layer has a late residual connection the output. To simplify, this connection allows for moregradient flow to each neuron in the network. My full thesis can be read [here](thesis.pdf).
 
-![late-residual](Images/lrn.png)
+![late-residual](images/lrn.png)
 
 
 ## Setup and How to Run
 
-[run_experiment_script.py](Code/run_experiment_script.py) is a script that can be used to run the experiments.
+[run_experiment_script.py](python/run_experiment_script.py) is a script that can be used to run the experiments.
 Below explains how to create an environment and run the script.
 
 ### Creating Environment
@@ -28,7 +28,7 @@ python3 -m pip install -r requirements.txt
 
 ### Running the Script
 
-To run the script, run [run_experiment_script.py](Code/run_experiment_script.py). This script looks at the [environment variables file](experiment_vars.yml) and runs the experiments based on the variables in the file. Change these to try different experiments. Below is a list of the variables and what they do.
+To run the script, run [run_experiment_script.py](python/run_experiment_script.py). This script looks at the [environment variables file](python/experiment_vars.yml) and runs the experiments based on the variables in the file. Change these to try different experiments. Below is a list of the variables and what they do.
     
     - width: The widths of the networks.
     - depths: The depths of the networks.

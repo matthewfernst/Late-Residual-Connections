@@ -5,10 +5,10 @@ import torch
 import pandas as pd
 from alive_progress import alive_bar
 
-import LateResidualPyTorch.LateResidualNeuralNetwork as LateResidualNeuralNetwork
-import Utilities.LateResidualUtilityFunctions as lr_utils
-import Utilities.GraphingCode.LateResidualGraphing as graph_utils
-import Utilities.DataframeCode.LateResidualDataframe as df_utils
+import late_residual_pytorch.late_residual_neural_network as lrnn
+import utilities.common as lr_utils
+import utilities.graphing as graph_utils
+import utilities.dataframe as df_utils
 
 
 def run_model(x: torch.tensor, t: torch.tensor, epochs: int, network_architecture: List[int],
@@ -30,8 +30,8 @@ def run_model(x: torch.tensor, t: torch.tensor, epochs: int, network_architectur
     """
     convergence_threshold = 0.07
 
-    model = LateResidualNeuralNetwork.NNet(1, network_architecture, 1, optimizer,
-                                           isResiduallyConnected=(connection_style == "Residual"))
+    model = lrnn.NNet(1, network_architecture, 1, optimizer,
+                      is_residually_connected=(connection_style == 'residual'), device='mps')
     start = time.time()
     model.train(x, t, epochs, learning_rate, training_style, verbose=verbose)
     end = time.time()
@@ -69,19 +69,19 @@ def heart_of_experiment(epochs: int, width: int, network_architecture: List[int]
     x, t = df_utils.load_abs_data()
 
     did_converge, results, model = run_model(x, t, epochs, network_architecture, optimizer, learning_rate,
-                                                  connection_style, training_style)
-                        
+                                             connection_style, training_style)
+
     graph_utils.graph_results(model, learning_rate, network_architecture,
                               width, optimizer, iteration, training_style, did_converge)
 
     converged_data.append(results)
 
 
-def run_experiments(optimizers: List[str], learning_rates: List[float], network_architectures: List[int],
+def run_experiments(optimizers: List[str], learning_rates: List[float], network_architectures: List[List[int]],
                     connection_styles: List[str], training_styles: List[str], iterations: int,
                     epochs: int, width: int, depths: List[int]) -> None:
     """
-    This function runs all of the experiments and saves the results to a csv file.
+    This function runs all the experiments and saves the results to a csv file.
     :param optimizers: The optimizers to be used
     :param learning_rates: The learning rates to be used
     :param network_architectures: The network architectures to be used
@@ -93,9 +93,11 @@ def run_experiments(optimizers: List[str], learning_rates: List[float], network_
     :param depths: The depths of the networks
     """
 
-    df_column_names = ["Iterative - Total Converged", "Iterative - Amount of Dead Neurons",
-                       "Iterative - Amount of Dead Layers", "Iterative - Total Time", "Batch - Total Converged",
-                       "Batch - Amount of Dead Neurons", "Batch - Amount of Dead Layers", "Batch - Total Time"]
+    df_column_names = [
+        "Iterative - Total Converged", "Iterative - Amount of Dead Neurons",
+        "Iterative - Amount of Dead Layers", "Iterative - Total Time", "Batch - Total Converged",
+        "Batch - Amount of Dead Neurons", "Batch - Amount of Dead Layers", "Batch - Total Time"
+    ]
 
     df_index_names = []
     for depth in depths:
@@ -115,10 +117,8 @@ def run_experiments(optimizers: List[str], learning_rates: List[float], network_
                 converged_batch_data = []
 
                 for connection_style in connection_styles:
-                    lr_utils.log_current_training_architecture(network_architecture,
-                                                                 learning_rate,
-                                                                 connection_style,
-                                                                 optimizer)
+                    lr_utils.log_current_training_architecture(network_architecture, learning_rate,
+                                                               connection_style, optimizer)
 
                     for training_style in training_styles:
                         converged_data = converged_iterative_data if training_style == "Iterative" \
@@ -160,12 +160,10 @@ def run(width: int, depths: List[int], learning_rates: List[float], optimizers, 
     :param epochs: The number of epochs to train for
     """
 
-    network_architectures = []
-    for depth in depths:
-        network_architectures.append([width for _ in range(depth)])
+    network_architectures = [[width] * d for d in depths]
 
-    connection_styles = ["Non Residual", "Residual"]
-    training_styles = ["Batch", "Iterative"]
+    connection_styles = ["non_residual", "residual"]
+    training_styles = ["batch", "iterative"]
     iterations = 10
 
     run_experiments(optimizers, learning_rates, network_architectures,

@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
 
-import Utilities.DataframeCode.LateResidualDataframe as df_utils
+import utilities.dataframe as df_utils
 
 
 def graph_results(model: torch.nn.Module, learning_rate: int, network_architecture: List[int], width: int,
                   optimizer: str, iteration: int, training_style: str, did_converge: bool) -> None:
     """
-    Graphs the results of the experiment and saves them to the Graphs folder.
+    graphs the results of the experiment and saves them to the graphs folder.
     :param model: The model that was trained.
     :param learning_rate: The learning rate used for training.
     :param network_architecture: The network architecture used for training.
@@ -38,7 +38,7 @@ def graph_results(model: torch.nn.Module, learning_rate: int, network_architectu
 
     convergence = "Convergence" if did_converge else "No-Convergence"
 
-    directory_path = f"Graphs/Width-{width}/{optimizer}/LearningRate-{learning_rate}/ \
+    directory_path = f"graphs/Width-{width}/{optimizer}/LearningRate-{learning_rate}/ \
         {training_style}/{convergence}/Depth-{depth}/"
     df_utils.make_directory_if_not_exists(directory_path)
 
@@ -74,13 +74,13 @@ def graph_results(model: torch.nn.Module, learning_rate: int, network_architectu
 
 def graph_all_results(width: int) -> None:
     """
-    Graphs all of the results for a given width.
+    graphs all of the results for a given width.
     :param width: The width of the network.
     """
     def graph_bar_results(dead_neurons_data: np.ndarray, optimizer: str, training_style: str, learning_rate: float,
                           x_ticks: List[str]) -> None:
         """
-        Graphs the dead neuron results for a given experiment.
+        graphs the dead neuron results for a given experiment.
         :param dead_neurons_data: The data to graph.
         :param optimizer: The optimizer used for training.
         :param training_style: The training style used for training.
@@ -100,7 +100,7 @@ def graph_all_results(width: int) -> None:
         ax.legend(labels=["Non-Residual", "Residual"])
         ax.set_xticks(np.arange(len(dead_neurons_data[-1])), x_ticks)
 
-        directory_path = f"../Graphs/Width-{width}/{optimizer}/LearningRate-{learning_rate}/{training_style}/"
+        directory_path = f"../graphs/Width-{width}/{optimizer}/LearningRate-{learning_rate}/{training_style}/"
         filename = f"All-Results-DeadNeurons-{training_style}"
         full_path = f"{directory_path}{filename}.jpeg"
 
@@ -128,7 +128,7 @@ def graph_all_results(width: int) -> None:
 
         return [dead_neurons_non_residual, dead_neurons_residual], x_ticks
 
-    # Main graph running code
+    # Main graph running python
     all_csvs = glob.glob(f"Results/Width-{width}/*/*.csv")
     for csv in all_csvs:
         df = pd.read_csv(csv)
